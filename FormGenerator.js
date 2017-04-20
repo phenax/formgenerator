@@ -1,0 +1,156 @@
+
+import * as vdom from './vdom';
+import FieldCollection from './FieldCollection';
+import FormField from './FormField';
+
+
+export default class FormGenerator {
+
+	static renderEditModal($el, field) {
+
+		$el.dataset.fieldID = field.id;
+
+		const template = field.getTemplateFields();
+		const $wrapper = $el.querySelector('.js-render-options');
+
+		vdom.unrender($wrapper);
+
+		if($wrapper) {
+			Object
+				.keys(template)
+				.forEach(attr => {
+
+					// // For adding select options
+					// if(Array.isArray(template[attr])) {
+					// 	// FormField.getArrayField();
+					// 	return;
+					// }
+
+					$wrapper.appendChild(vdom.labeledInput(vdom.createElem('input', {
+						value: template[attr],
+						name: attr,
+						placeholder: attr,
+						class: 'form-control',
+						label: attr,
+					})));
+				});
+		}
+
+		Object
+			.keys(field.attribs)
+			.forEach(attr => {
+				const $input = $el.querySelector(`[name=${attr}]`);
+				if($input)
+					$input.value = field.attribs[attr];
+			});
+	}
+
+	constructor(config) {
+
+		this.initConstants();
+		this.$parent = document.querySelector(config.selector);
+
+		this.$previewWrapper = this.$parent.querySelector(this.PREVIEW_WRAPPER);
+		this.$addFieldBtns = this.$parent.querySelectorAll(this.ADD_FIELD_BTN);
+
+		this.fields = new FieldCollection();
+		this.controls = true;
+	}
+
+	initConstants() {
+		this.PREVIEW_WRAPPER = '.js-preview';
+		this.ADD_FIELD_BTN = '.js-add-field';
+	}
+
+	get fieldID() {
+		const random = Math.floor(Math.random() * 100000);
+		return random.toString(16) + Date.now().toString();
+	}
+
+	unrenderFields() {
+		vdom.unrender(this.$previewWrapper);
+	}
+
+	removeField(fieldID) {
+		this.fields.delete(fieldID);
+		this.renderFields();
+	}
+
+	appendField(field, $container = this.$previewWrapper) {
+		const $wrapper = vdom.createElem('div', { 'class': 'input-wrapper' });
+		const $fieldEl = vdom.labeledInput(field.getElement(), field.attribs.label);
+
+		$wrapper.appendChild($fieldEl);
+		if(this.controls) {
+			$wrapper.appendChild(this.getControlPanel(field));
+		}
+
+		$container.appendChild($wrapper);
+	}
+
+	renderString() {
+
+		const $wrapper = vdom.createElem('div');
+
+		this.fields.arr.forEach(field => this.appendField(field, $wrapper));
+
+		return $wrapper.outerHTML;
+	}
+
+	renderFields(keys=[]) {
+		if(keys.length) {
+			keys.map(key => this.appendField(this.fields.get(key)));
+		} else {
+			this.unrenderFields();
+			this.fields.arr.forEach(field => this.appendField(field));
+		}
+	}
+
+	addField(type, attribs) {
+
+		const id = this.fieldID;
+		const field = new FormField(type, id, attribs);
+
+		this.fields.set(id, field);
+		return id;
+	}
+
+	getControlPanel(field) {
+
+		const $controlPanel = vdom.createElem('div', {
+			'class': 'control-box'
+		});
+
+		const $editBtn = vdom.createControlBtn('Edit', 'btn-warning', () => {
+			if(typeof this.editCallback === 'function')
+				this.editCallback(field.id, field);
+		});
+
+		const $removeBtn = vdom.createControlBtn('Remove', 'btn-danger', () => {
+			let status =
+				typeof this.removeCallback === 'function'?
+					this.removeCallback(field.id, field) :true;
+
+			if(status) this.removeField(field.id);
+		});
+
+		const $pullUp = vdom.createControlBtn('Up', 'btn-primary', () => {
+			const index = this.fields.arr.indexOf(field);
+			if(this.fields.swap(index, index - 1))
+				this.renderFields();
+		});
+
+		const $pullDown = vdom.createControlBtn('Down', 'btn-primary', () => {
+			const index = this.fields.arr.indexOf(field);
+			if(this.fields.swap(index, index + 1))
+				this.renderFields();
+		});
+
+		$controlPanel.appendChild($editBtn);
+		$controlPanel.appendChild($removeBtn);
+		$controlPanel.appendChild($pullUp);
+		$controlPanel.appendChild($pullDown);
+
+		return $controlPanel;
+	}
+}

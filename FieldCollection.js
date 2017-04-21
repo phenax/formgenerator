@@ -39,6 +39,16 @@ export default class FieldCollection {
 		return false;
 	}
 
+	forEach(callback) {
+		if(typeof callback === 'function') {
+			this.arr.forEach((field, i) => callback(field, i));
+		}
+	}
+
+	indexOf(field) {
+		return this.arr.indexOf(field);
+	}
+
 	toJSON() { return JSON.stringify(this.toArray()); }
 	toArray() {
 		return this.arr.map(field => ({

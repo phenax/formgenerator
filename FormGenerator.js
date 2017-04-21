@@ -97,7 +97,7 @@ export default class FormGenerator {
 
 		const $wrapper = vdom.createElem('div');
 
-		this.fields.arr.forEach(field => this.appendField(field, $wrapper));
+		this.fields.forEach(field => this.appendField(field, $wrapper));
 
 		return $wrapper.outerHTML;
 	}
@@ -107,7 +107,7 @@ export default class FormGenerator {
 			keys.map(key => this.appendField(this.fields.get(key)));
 		} else {
 			this.unrenderFields();
-			this.fields.arr.forEach(field => this.appendField(field));
+			this.fields.forEach(field => this.appendField(field));
 		}
 	}
 
@@ -136,13 +136,13 @@ export default class FormGenerator {
 		});
 
 		const $pullUp = vdom.controlButton('Up', 'btn-primary', () => {
-			const index = this.fields.arr.indexOf(field);
+			const index = this.fields.indexOf(field);
 			if(this.fields.swap(index, index - 1))
 				this.renderFields();
 		});
 
 		const $pullDown = vdom.controlButton('Down', 'btn-primary', () => {
-			const index = this.fields.arr.indexOf(field);
+			const index = this.fields.indexOf(field);
 			if(this.fields.swap(index, index + 1))
 				this.renderFields();
 		});

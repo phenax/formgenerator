@@ -68,13 +68,15 @@ export default class FormField {
 		return $inputEl;
 	}
 
-	getTemplateFields() {
+	static getTemplateFields(type) {
+		return FormField.prototype.getTemplateFields(type);
+	}
 
-		const template = {
-			label: 'Form field',
-		};
+	getTemplateFields(type=this.type) {
 
-		switch(this.type) {
+		const template = { label: 'Form field' };
+
+		switch(type) {
 			case FormField.TEXT_FIELD: {
 				Object.assign(template, {
 					placeholder: 'Eg - Wowness',

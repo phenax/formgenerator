@@ -94,11 +94,8 @@ export default class FormGenerator {
 	}
 
 	renderString() {
-
 		const $wrapper = vdom.createElem('div');
-
 		this.fields.forEach(field => this.appendField(field, $wrapper));
-
 		return $wrapper.outerHTML;
 	}
 

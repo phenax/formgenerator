@@ -119,11 +119,8 @@ export default class FormGenerator {
 		});
 
 		const $removeBtn = vdom.controlButton('Remove', 'btn-danger', () => {
-			let status =
-				typeof this.removeCallback === 'function'?
-					this.removeCallback(field.id, field) :true;
-
-			if(status) this.removeField(field.id);
+			if(typeof this.removeCallback === 'function')
+				this.removeCallback(field.id, field);
 		});
 
 		const $pullUp = vdom.controlButton('Up', 'btn-primary', () => {

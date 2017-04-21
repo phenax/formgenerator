@@ -12,10 +12,11 @@ export function createElem(name, attribs={}, children=[]) {
 
 	const $elem = document.createElement(name);
 
+	// Append children
 	Array
 		.from(children)
 		.map(el => typeof el === 'string'? text(el): el)
-		.forEach($el => $div.appendChild($el));
+		.forEach($el => $elem.appendChild($el));
 
 	// Apply attribs
 	Object.keys(attribs).forEach(key => {

@@ -18,32 +18,38 @@ export default class FormGenerator {
 		if($wrapper) {
 			Object
 				.keys(template)
-				.forEach(attr => {
+				.map(attr => {
 
-					// // For adding select options
-					// if(Array.isArray(template[attr])) {
-					// 	// FormField.getArrayField();
-					// 	return;
-					// }
+					// TODO: For adding select options
+					if(Array.isArray(template[attr])) {
+						// FormField.getArrayField();
+						return;
+					}
 
-					$wrapper.appendChild(vdom.labeledInput(vdom.createElem('input', {
+					return {
 						value: template[attr],
 						name: attr,
 						placeholder: attr,
 						class: 'form-control',
 						label: attr,
-					})));
-				});
+					};
+				})
+				.map(attribs => vdom.createElem('input', attribs))
+				.map($input => $wrapper.appendChild(vdom.labeledInput($input)));
 		}
 
 		Object
 			.keys(field.attribs)
 			.forEach(attr => {
+
 				const $input = $el.querySelector(`[name=${attr}]`);
-				if($input)
+
+				if($input) {
 					$input.value = field.attribs[attr];
+				}
 			});
 	}
+
 
 	constructor(config) {
 
@@ -77,10 +83,9 @@ export default class FormGenerator {
 	}
 
 	appendField(field, $container = this.$previewWrapper) {
-		const $wrapper = vdom.createElem('div', { 'class': 'input-wrapper' });
 		const $fieldEl = vdom.labeledInput(field.getElement(), field.attribs.label);
+		const $wrapper = vdom.div({ 'class': 'input-wrapper' }, [ $fieldEl ]);
 
-		$wrapper.appendChild($fieldEl);
 		if(this.controls) {
 			$wrapper.appendChild(this.getControlPanel(field));
 		}
@@ -117,16 +122,12 @@ export default class FormGenerator {
 
 	getControlPanel(field) {
 
-		const $controlPanel = vdom.createElem('div', {
-			'class': 'control-box'
-		});
-
-		const $editBtn = vdom.createControlBtn('Edit', 'btn-warning', () => {
+		const $editBtn = vdom.controlButton('Edit', 'btn-warning', () => {
 			if(typeof this.editCallback === 'function')
 				this.editCallback(field.id, field);
 		});
 
-		const $removeBtn = vdom.createControlBtn('Remove', 'btn-danger', () => {
+		const $removeBtn = vdom.controlButton('Remove', 'btn-danger', () => {
 			let status =
 				typeof this.removeCallback === 'function'?
 					this.removeCallback(field.id, field) :true;
@@ -134,23 +135,21 @@ export default class FormGenerator {
 			if(status) this.removeField(field.id);
 		});
 
-		const $pullUp = vdom.createControlBtn('Up', 'btn-primary', () => {
+		const $pullUp = vdom.controlButton('Up', 'btn-primary', () => {
 			const index = this.fields.arr.indexOf(field);
 			if(this.fields.swap(index, index - 1))
 				this.renderFields();
 		});
 
-		const $pullDown = vdom.createControlBtn('Down', 'btn-primary', () => {
+		const $pullDown = vdom.controlButton('Down', 'btn-primary', () => {
 			const index = this.fields.arr.indexOf(field);
 			if(this.fields.swap(index, index + 1))
 				this.renderFields();
 		});
 
-		$controlPanel.appendChild($editBtn);
-		$controlPanel.appendChild($removeBtn);
-		$controlPanel.appendChild($pullUp);
-		$controlPanel.appendChild($pullDown);
-
-		return $controlPanel;
+		return vdom.div(
+			{ 'class': 'control-box' },
+			[ $editBtn, $removeBtn, $pullUp, $pullDown ]
+		);
 	}
 }

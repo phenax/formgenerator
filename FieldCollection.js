@@ -47,6 +47,7 @@ export default class FieldCollection {
 			attribs: field.attribs,
 		}));
 	}
+
 	loadArray(fields) {
 		return fields
 			.map(field => new FormField(field.type, field.id, field.attribs))

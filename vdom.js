@@ -97,3 +97,34 @@ export function labeledInput($input, label=($input.placeholder)) {
 export function div(attribs={}, children=[]) {
 	return createElem('div', attribs, children);
 }
+
+export function createArrayInput(attribs, callback) {
+
+	let lastIndex = 0;
+
+	const arr =
+		Array
+			.from(attribs.value)
+			.map((a, i) => { lastIndex = i; a.name += i; });
+
+	const render = () =>
+		createElem('label', {}, [
+			div({},[
+				text(attribs.label)
+			]),
+			div({}, [
+				arr.map(val => createElem('input', val))
+			]),
+			div({}, [
+				controlButton('Add', 'btn-primary', addInput)
+			])
+		]);
+
+	const addInput = () => {
+		arr.push({ name: lastIndex })
+		callback(render);
+	};
+
+	callback(render);
+}
+

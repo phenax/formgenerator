@@ -18,23 +18,17 @@ export default class FormGenerator {
 		if($wrapper) {
 			Object
 				.keys(template)
-				.map(attr => {
-
-					// TODO: For adding select options
-					if(Array.isArray(template[attr])) {
-						// FormField.getArrayField();
-						return;
-					}
-
-					return {
-						value: template[attr],
-						name: attr,
-						placeholder: attr,
-						class: 'form-control',
-						label: attr,
-					};
-				})
-				.map(attribs => vdom.createElem('input', attribs))
+				.map(attr => ({
+					value: template[attr],
+					name: attr,
+					placeholder: attr,
+					class: 'form-control',
+					label: attr,
+				}))
+				.map(attribs => Array.isArray(attribs.value)?
+					vdom.createArrayInput(attribs):
+					vdom.createElem('input', attribs)
+				)
 				.map($input => $wrapper.appendChild(vdom.labeledInput($input)));
 		}
 

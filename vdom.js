@@ -20,8 +20,10 @@ export function createElem(name, attribs={}, children=[]) {
 
 	// Apply attribs
 	Object.keys(attribs).forEach(key => {
-		$elem[key] = attribs[key];
-		$elem.setAttribute(key, attribs[key]);
+		if(!key.endsWith('_')) {
+			$elem[key] = attribs[key];
+			$elem.setAttribute(key, attribs[key]);
+		}
 	});
 
 	return $elem;
@@ -61,7 +63,7 @@ export function unrender($el) {
  */
 export function controlButton(text, classname='', clickHandle) {
 
-	const $btn = createElem('button', { 'class': `btn btn-sm ${classname}` });
+	const $btn = createElem('button', { class: `btn btn-sm ${classname}`, type: 'button' });
 
 	$btn.innerHTML = text;
 	$btn.addEventListener('click', () => clickHandle());
@@ -98,33 +100,34 @@ export function div(attribs={}, children=[]) {
 	return createElem('div', attribs, children);
 }
 
-export function createArrayInput(attribs, callback) {
+export function createArrayInput(attribs, callback=(() => null)) {
 
 	let lastIndex = 0;
+	let $lastNode = null;
+	let addInput;
 
-	const arr =
-		Array
-			.from(attribs.value)
-			.map((a, i) => { lastIndex = i; a.name += i; });
+	const arr = attribs.value.map((a, i) => { lastIndex = i; a.name = `options_[${i}]`; });
 
 	const render = () =>
 		createElem('label', {}, [
-			div({},[
-				text(attribs.label)
-			]),
-			div({}, [
-				arr.map(val => createElem('input', val))
-			]),
-			div({}, [
-				controlButton('Add', 'btn-primary', addInput)
-			])
+			div({},[ attribs.label ]),
+			div({}, arr.map(val => createElem('input', val))),
+			div({}, [ controlButton('Add', 'btn-primary', addInput) ])
 		]);
 
-	const addInput = () => {
-		arr.push({ name: lastIndex })
-		callback(render);
+	addInput = () => {
+		arr.push({ name: `options_[${lastIndex++}]`, value: 'Option ' + lastIndex });
+		callback(render, arr);
+
+		if($lastNode.parentNode) {
+			const $node = render();
+			$lastNode.parentNode.replaceChild($node, $lastNode);
+			$lastNode = $node;
+		}
 	};
 
-	callback(render);
+	$lastNode = render();
+
+	return $lastNode;
 }
 

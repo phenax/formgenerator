@@ -39,7 +39,7 @@ export default class FormField {
 			}
 			case FormField.SELECT_FIELD: {
 				elementName = 'select';
-				childrenEls = attribs.options;
+				childrenEls = attribs.options_;
 				break;
 			}
 			case FormField.HTML_CONTENT: {
@@ -93,7 +93,7 @@ export default class FormField {
 			}
 			case FormField.SELECT_FIELD: {
 				Object.assign(template, {
-					options: [],
+					options_: [],
 					label: 'Select Value',
 				});
 				break;

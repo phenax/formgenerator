@@ -12,8 +12,11 @@ export default class FormGenerator {
 
 		const template = field.getTemplateFields();
 		const $wrapper = $el.querySelector('.js-render-options');
+		let $arrInput = null;
 
 		vdom.unrender($wrapper);
+
+		const arrayInpChange = (render) => {};
 
 		if($wrapper) {
 			Object
@@ -25,10 +28,14 @@ export default class FormGenerator {
 					class: 'form-control',
 					label: attr,
 				}))
-				.map(attribs => Array.isArray(attribs.value)?
-					vdom.createArrayInput(attribs):
-					vdom.createElem('input', attribs)
-				)
+				.map(attribs => {
+					if(Array.isArray(attribs.value)) {
+						$arrInput = vdom.createArrayInput(attribs, arrayInpChange);
+						return $arrInput;
+					}
+
+					return vdom.createElem('input', attribs);
+				})
 				.map($input => $wrapper.appendChild(vdom.labeledInput($input)));
 		}
 

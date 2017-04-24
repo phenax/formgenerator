@@ -2,6 +2,15 @@
 import * as vdom from './vdom';
 
 
+/**
+ * Email validation regular expression
+ * @type {RegExp}
+ */
+const EMAIL_REGEX =
+	/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+
+
 export default class FormField {
 
 	// Element type for the form field
@@ -10,11 +19,30 @@ export default class FormField {
 	static get SELECT_FIELD() { return 'SELECT_FIELD'; }
 	static get HTML_CONTENT() { return 'HTML_CONTENT'; }
 
+	static REQUIRED_VALIDATION(input) { return !!input; }
+	static LENGTH_VALIDATION(input, size) { return input.length >= size; }
+	static NO_VALIDATION() { return true; }
+	static EMAIL_VALIDATION(email) {return EMAIL_REGEX.test(email); }
+
+
+	static getValidationFn(type) {
+		switch(type) {
+			case 'required': return FormField.REQUIRED_VALIDATION;
+			case 'email': return FormField.EMAIL_VALIDATION;
+			default: return FormField.NO_VALIDATION;
+		}
+	}
+
+
 	constructor(type, id, attribs={}) {
 		this.id = id;
 		this.type = type;
 		this.attribs = attribs;
 		this.selector = `.js-form-input-el--${this.id}`;
+
+		const validationFn =
+			FormField.getValidationFn(this.attribs.validationType);
+		this.validate = () => validationFn(this.$inputEl.value);
 	}
 
 	getElement(attribs=this.attribs, merge=true) {
@@ -84,6 +112,7 @@ export default class FormField {
 				Object.assign(template, {
 					placeholder: 'Eg - Wowness',
 					label: 'Enter value',
+					validationType: 'required',
 				});
 				break;
 			}
@@ -91,6 +120,7 @@ export default class FormField {
 				Object.assign(template, {
 					placeholder: 'Eg - Something cool',
 					label: 'Enter value',
+					validationType: 'required',
 				});
 				break;
 			}
@@ -98,6 +128,7 @@ export default class FormField {
 				Object.assign(template, {
 					options_: [],
 					label: 'Select Value',
+					validationType: 'required',
 				});
 				break;
 			}
@@ -110,5 +141,26 @@ export default class FormField {
 		}
 
 		return template;
+	}
+
+
+	markInvalid(text = 'The value you entered is invalid') {
+
+		this.unmark();
+
+		this.$invalidMessage = vdom.div({}, [ vdom.text(text) ]);
+
+		this.$inputEl.style.borderColor = this.$invalidMessage.style.color = '#e74c3c';
+		this.$inputEl.parentNode.appendChild(this.$invalidMessage);
+	}
+
+	unmark() {
+		if(this.$invalidMessage) {
+			try {
+				this.$inputEl.parentNode.removeChild(this.$invalidMessage);
+				this.$inputEl.style.borderColor = '#ddd';
+				this.$invalidMessage = null;
+			} catch(e) { console.log(e); }
+		}
 	}
 }

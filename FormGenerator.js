@@ -22,20 +22,15 @@ export default class FormGenerator {
 			Object
 				.keys(template)
 				.map(attr => ({
-					value: template[attr],
-					name: attr,
-					placeholder: attr,
-					class: 'form-control',
-					label: attr,
+					class: 'form-control', value: template[attr],
+					name: attr, label: attr, placeholder: attr,
 				}))
-				.map(attribs => {
-					if(Array.isArray(attribs.value)) {
-						$arrInput = vdom.createArrayInput(attribs, arrayInpChange);
-						return $arrInput;
-					}
-
-					return vdom.createElem('input', attribs);
-				})
+				.map(attribs =>
+					(Array.isArray(attribs.value))?
+						vdom.createArrayInput(attribs, arrayInpChange):
+						vdom.createElem('input', attribs)
+				)
+				.concat([ vdom.text('NOTE: Possible validation inputs: email, required') ])
 				.map($input => $wrapper.appendChild(vdom.labeledInput($input)));
 		}
 
@@ -45,9 +40,8 @@ export default class FormGenerator {
 
 				const $input = $el.querySelector(`[name=${attr}]`);
 
-				if($input) {
+				if($input)
 					$input.value = field.attribs[attr];
-				}
 			});
 	}
 

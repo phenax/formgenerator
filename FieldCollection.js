@@ -63,4 +63,20 @@ export default class FieldCollection {
 			.map(fieldOptns => new FormField(fieldOptns.type, fieldOptns.id, fieldOptns.attribs))
 			.map(field => this.set(field.id, field));
 	}
+
+
+	validate() {
+
+		let isValid = true;
+		let field = null;
+
+		this.forEach(inpField => {
+			if(isValid) {
+				isValid = inpField.validate();
+				field = inpField;
+			}
+		});
+
+		return { isValid, field };
+	}
 }

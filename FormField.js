@@ -10,7 +10,9 @@ const EMAIL_REGEX =
 	/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 
-
+/**
+ * Each field in the form collection
+ */
 export default class FormField {
 
 	// Element type for the form field
@@ -20,6 +22,7 @@ export default class FormField {
 	static get HTML_CONTENT() { return 'HTML_CONTENT'; }
 	static get FILE_UPLOAD() { return 'FILE_UPLOAD'; }
 
+	// Validation method constants
 	static REQUIRED_VALIDATION(input) { return !!input; }
 	static LENGTH_VALIDATION(input, size) { return input.length >= size; }
 	static NO_VALIDATION() { return true; }
@@ -28,8 +31,8 @@ export default class FormField {
 
 	/**
 	 * Validation function getter
-	 * @param  {[type]} type [description]
-	 * @return {[type]}      [description]
+	 * @param  {String}   type   Validation identifier
+	 * @return {Function}        Validation function
 	 */
 	static getValidationFn(type) {
 		switch(type) {
@@ -42,6 +45,7 @@ export default class FormField {
 
 	/**
 	 * Error message getter
+	 * @return {String}
 	 */
 	get ERROR_MESSAGE() {
 		switch(this.attribs.validationType) {
@@ -52,6 +56,7 @@ export default class FormField {
 	}
 
 
+	// Constructor
 	constructor(type, id, attribs={}) {
 		this.id = id;
 		this.type = type;
@@ -63,8 +68,16 @@ export default class FormField {
 		this.validate = () => validationFn(this.$inputEl.value);
 	}
 
+
+	/**
+	 * Render and get the element
+	 * @param  {Object}       attribs  Attributes/Props
+	 * @param  {Boolean}      merge    To merge or not to merge the attributes
+	 * @return {HTMLElement}           Rendered element
+	 */
 	getElement(attribs=this.attribs, merge=true) {
 
+		// Merge the config
 		if(merge) {
 			attribs = Object.assign(this.attribs, attribs);
 		}
@@ -73,6 +86,7 @@ export default class FormField {
 		let childrenEls = null;
 		let isInput = true;
 
+		// Configure the element depending on its type
 		switch(this.type) {
 			case FormField.TEXT_FIELD: {
 				elementName = 'input';
@@ -102,6 +116,7 @@ export default class FormField {
 
 		attribs.name = attribs.name || this.id;
 
+		// If the element has children, render them
 		if(childrenEls && childrenEls.length) {
 			childrenEls =
 				childrenEls
@@ -114,22 +129,32 @@ export default class FormField {
 		const $inputEl = vdom.createElem(elementName, attribs, childrenEls);
 		$inputEl.classList.add(this.selector);
 
-		if(isInput) {
-			$inputEl.classList.add('form-control');
-		}
+		// For inputs, add the form control class
+		if(isInput) $inputEl.classList.add('form-control');
 
 		this.$inputEl = $inputEl;
 		return $inputEl;
 	}
 
+
+	/**
+	 * Get template fields
+	 *  (Static version of the instance method)
+	 */
 	static getTemplateFields(type) {
 		return FormField.prototype.getTemplateFields(type);
 	}
 
+	/**
+	 * Get template fields
+	 * @param  {String} type  The element type (default:this.type)
+	 * @return {Object}       The element template
+	 */
 	getTemplateFields(type=this.type) {
 
-		const template = { label: 'Form field' };
+		const template = { label: 'Some content' };
 
+		// Extend the attributes
 		switch(type) {
 			case FormField.TEXT_FIELD: {
 				Object.assign(template, {
@@ -174,6 +199,10 @@ export default class FormField {
 	}
 
 
+	/**
+	 * Mark the field as invalid (after validation)
+	 * @param  {String} text
+	 */
 	markInvalid(text = 'The value you entered is invalid') {
 
 		this.unmark();
@@ -184,6 +213,10 @@ export default class FormField {
 		this.$inputEl.parentNode.appendChild(this.$invalidMessage);
 	}
 
+
+	/**
+	 * Unmark the field(if not invalid)
+	 */
 	unmark() {
 		if(this.$invalidMessage) {
 			try {

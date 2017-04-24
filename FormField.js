@@ -18,6 +18,7 @@ export default class FormField {
 	static get TEXT_AREA() { return 'TEXT_AREA'; }
 	static get SELECT_FIELD() { return 'SELECT_FIELD'; }
 	static get HTML_CONTENT() { return 'HTML_CONTENT'; }
+	static get FILE_UPLOAD() { return 'FILE_UPLOAD'; }
 
 	static REQUIRED_VALIDATION(input) { return !!input; }
 	static LENGTH_VALIDATION(input, size) { return input.length >= size; }
@@ -75,6 +76,11 @@ export default class FormField {
 				isInput = false;
 				break;
 			}
+			case FormField.FILE_UPLOAD: {
+				elementName = 'input';
+				attribs.type = 'file';
+				break;
+			}
 		}
 
 		attribs.name = attribs.name || this.id;
@@ -128,6 +134,13 @@ export default class FormField {
 				Object.assign(template, {
 					options_: [],
 					label: 'Select Value',
+					validationType: 'required',
+				});
+				break;
+			}
+			case FormField.FILE_UPLOAD: {
+				Object.assign(template, {
+					label: 'Upload image',
 					validationType: 'required',
 				});
 				break;

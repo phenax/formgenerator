@@ -100,6 +100,15 @@ export function div(attribs={}, children=[]) {
 	return createElem('div', attribs, children);
 }
 
+
+/**
+ * Create an array input(Input for creating options)
+ * 
+ * @param  {Object}       attribs
+ * @param  {Function}     callback
+ * 
+ * @return {HTMLElement}
+ */
 export function createArrayInput(attribs, callback=(() => null)) {
 
 	let lastIndex = 0;
@@ -108,14 +117,27 @@ export function createArrayInput(attribs, callback=(() => null)) {
 
 	const arr = attribs.value.map((a, i) => { lastIndex = i; a.name = `options_[${i}]`; });
 
+	/**
+	 * Renders the array options list
+	 * @return {HTMLElement}
+	 */
 	const render = () =>
 		createElem('label', {}, [
 			div({},[ attribs.label ]),
-			div({}, arr.map(val => createElem('input', val))),
+			div({}, arr.map(val => (
+				div({}, [
+					createElem('input', Object.assign(val, { 'class': 'form-control' }))
+				])
+			))),
 			div({}, [ controlButton('Add', 'btn-primary', addInput) ])
 		]);
 
+
+	/**
+	 * Add a new options input
+	 */
 	addInput = () => {
+
 		arr.push({ name: `options_[${lastIndex++}]`, value: 'Option ' + lastIndex });
 		callback(render, arr);
 

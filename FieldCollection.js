@@ -60,7 +60,7 @@ export default class FieldCollection {
 
 	loadArray(fields) {
 		return fields
-			.map(field => new FormField(field.type, field.id, field.attribs))
+			.map(fieldOptns => new FormField(fieldOptns.type, fieldOptns.id, fieldOptns.attribs))
 			.map(field => this.set(field.id, field));
 	}
 }

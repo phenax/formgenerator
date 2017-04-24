@@ -52,7 +52,10 @@ export default class FormField {
 		attribs.name = attribs.name || this.id;
 
 		if(childrenEls && childrenEls.length) {
-			childrenEls = childrenEls.map(elem => vdom.createElem(elem.tagname, elem));
+			childrenEls =
+				childrenEls
+					.filter(elem => elem.textContent || elem.innerHTML)
+					.map(elem => vdom.createElem(elem.tagname, elem));
 		} else {
 			childrenEls = [];
 		}

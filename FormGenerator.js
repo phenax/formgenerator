@@ -125,10 +125,9 @@ export default class FormGenerator {
 				this.editCallback(field.id, field);
 		});
 
-		const $removeBtn = vdom.controlButton('Remove', 'btn-danger', () => {
-			if(typeof this.removeCallback === 'function')
-				this.removeCallback(field.id, field);
-		});
+		const $removeBtn = vdom.controlButton('Remove', 'btn-danger',
+			() => this.removeField(field.id)
+		);
 
 		const $pullUp = vdom.controlButton('Up', 'btn-primary', () => {
 			const index = this.fields.indexOf(field);

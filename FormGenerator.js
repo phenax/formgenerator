@@ -47,7 +47,7 @@ export default class FormGenerator {
 			.keys(field.attribs)
 			.map(attr => ({ $el: $el.querySelector(`[name=${attr}]`), value: field.attribs[attr] }))
 			.filter(attr => attr.$el)
-			.forEach(attr => $input.value = attr.value);
+			.forEach(attr => attr.$el.value = attr.value);
 	}
 
 

@@ -15,7 +15,7 @@ export function createElem(name, attribs={}, children=[]) {
 	// Append children
 	Array
 		.from(children)
-		.map(el => typeof el === 'string'? text(el): el)
+		.map(el => !(el instanceof HTMLElement)? text(el): el)
 		.forEach($el => $elem.appendChild($el));
 
 	// Apply attribs

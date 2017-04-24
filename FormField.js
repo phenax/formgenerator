@@ -26,11 +26,28 @@ export default class FormField {
 	static EMAIL_VALIDATION(email) {return EMAIL_REGEX.test(email); }
 
 
+	/**
+	 * Validation function getter
+	 * @param  {[type]} type [description]
+	 * @return {[type]}      [description]
+	 */
 	static getValidationFn(type) {
 		switch(type) {
 			case 'required': return FormField.REQUIRED_VALIDATION;
 			case 'email': return FormField.EMAIL_VALIDATION;
 			default: return FormField.NO_VALIDATION;
+		}
+	}
+
+
+	/**
+	 * Error message getter
+	 */
+	get ERROR_MESSAGE() {
+		switch(this.attribs.validationType) {
+			case 'required': return 'This field is required';
+			case 'email': return 'The email you entered is invalid';
+			default: return 'Something went wrong';
 		}
 	}
 

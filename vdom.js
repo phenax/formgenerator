@@ -1,4 +1,7 @@
 
+import assign from 'object-assign';
+
+Array.from = Array.from || (arr => Array.prototype.slice.call(arr, 0));
 
 /**
  * Create new element
@@ -126,7 +129,7 @@ export function createArrayInput(attribs, callback=(() => null)) {
 			div({},[ attribs.label ]),
 			div({}, arr.map(val => (
 				div({}, [
-					createElem('input', Object.assign(val, { 'class': 'form-control' }))
+					createElem('input', assign(val, { 'class': 'form-control' }))
 				])
 			))),
 			div({}, [ controlButton('Add', 'btn-primary', addInput) ])

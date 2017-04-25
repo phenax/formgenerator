@@ -1,5 +1,6 @@
 
 import * as vdom from './vdom';
+import assign from 'object-assign';
 
 
 /**
@@ -79,7 +80,7 @@ export default class FormField {
 
 		// Merge the config
 		if(merge) {
-			attribs = Object.assign(this.attribs, attribs);
+			attribs = assign(this.attribs, attribs);
 		}
 
 		let elementName = 'input';
@@ -157,7 +158,7 @@ export default class FormField {
 		// Extend the attributes
 		switch(type) {
 			case FormField.TEXT_FIELD: {
-				Object.assign(template, {
+				assign(template, {
 					placeholder: 'Eg - Wowness',
 					label: 'Enter value',
 					validationType: 'required',
@@ -165,7 +166,7 @@ export default class FormField {
 				break;
 			}
 			case FormField.TEXT_AREA: {
-				Object.assign(template, {
+				assign(template, {
 					placeholder: 'Eg - Something cool',
 					label: 'Enter value',
 					validationType: 'required',
@@ -173,7 +174,7 @@ export default class FormField {
 				break;
 			}
 			case FormField.SELECT_FIELD: {
-				Object.assign(template, {
+				assign(template, {
 					options_: [],
 					label: 'Select Value',
 					validationType: 'required',
@@ -181,14 +182,14 @@ export default class FormField {
 				break;
 			}
 			case FormField.FILE_UPLOAD: {
-				Object.assign(template, {
+				assign(template, {
 					label: 'Upload image',
 					validationType: 'required',
 				});
 				break;
 			}
 			case FormField.HTML_CONTENT: {
-				Object.assign(template, {
+				assign(template, {
 					innerHTML: 'This is content!',
 				});
 				break;

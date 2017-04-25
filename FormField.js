@@ -207,7 +207,7 @@ export default class FormField {
 
 		this.unmark();
 
-		this.$invalidMessage = vdom.div({}, [ vdom.text(text) ]);
+		this.$invalidMessage = vdom.div({}, [ text ]);
 
 		this.$inputEl.style.borderColor = this.$invalidMessage.style.color = '#e74c3c';
 		this.$inputEl.parentNode.appendChild(this.$invalidMessage);

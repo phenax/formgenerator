@@ -45,7 +45,7 @@ export default class FormField {
 	 * @param  {String}   type   Validation identifier
 	 * @return {Function}        Validation function
 	 */
-	static getValidationFn(type) {
+	static getValidationFn(type='') {
 		// Convention: Validation function ends with a `_VALIDATION`.
 		const key = type.toUpperCase() + '_VALIDATION';
 		return FormField[key] || FormField.NO_VALIDATION;

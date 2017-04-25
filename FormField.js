@@ -24,10 +24,20 @@ export default class FormField {
 	static get FILE_UPLOAD() { return 'FILE_UPLOAD'; }
 
 	// Validation method constants
-	static REQUIRED_VALIDATION(input) { return !!input; }
-	static LENGTH_VALIDATION(input, size) { return input.length >= size; }
-	static EMAIL_VALIDATION(email) {return EMAIL_REGEX.test(email); }
-	static NO_VALIDATION() { return true; }
+	static REQUIRED_VALIDATION(input) { return !!input; }                   // Required field
+	static LENGTH_VALIDATION(input, size) { return input.length >= size; }  // Max size
+	static EMAIL_VALIDATION(email) {return EMAIL_REGEX.test(email); }       // Email validation
+	static NO_VALIDATION() { return true; }                                 // No validation field
+
+
+	// Default error messages
+	static get DEFAULT_ERROR_MESSAGES() {
+		return {
+			required: 'This field is required',
+			email: 'The email you entered is invalid',
+			default: 'Something went wrong',
+		};
+	}
 
 
 	/**
@@ -36,11 +46,9 @@ export default class FormField {
 	 * @return {Function}        Validation function
 	 */
 	static getValidationFn(type) {
-		switch(type) {
-			case 'required': return FormField.REQUIRED_VALIDATION;
-			case 'email': return FormField.EMAIL_VALIDATION;
-			default: return FormField.NO_VALIDATION;
-		}
+		// Convention: Validation function ends with a `_VALIDATION`.
+		const key = type.toUpperCase() + '_VALIDATION';
+		return FormField[key] || FormField.NO_VALIDATION;
 	}
 
 
@@ -49,11 +57,9 @@ export default class FormField {
 	 * @return {String}
 	 */
 	get ERROR_MESSAGE() {
-		switch(this.attribs.validationType) {
-			case 'required': return 'This field is required';
-			case 'email': return 'The email you entered is invalid';
-			default: return 'Something went wrong';
-		}
+		const type = this.attribs.validationType;
+		return FormField.DEFAULT_ERROR_MESSAGES[type] ||
+			FormField.DEFAULT_ERROR_MESSAGES['default'];
 	}
 
 
@@ -64,8 +70,8 @@ export default class FormField {
 		this.attribs = attribs;
 		this.selector = `.js-form-input-el--${this.id}`;
 
-		const validationFn =
-			FormField.getValidationFn(this.attribs.validationType);
+		// Get validation function
+		const validationFn = FormField.getValidationFn(this.attribs.validationType);
 		this.validate = () => validationFn(this.$inputEl.value);
 	}
 

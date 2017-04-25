@@ -141,6 +141,8 @@ export function createArrayInput(attribs, callback=(() => null)) {
 		arr.push({ name: `options_[${lastIndex++}]`, value: 'Option ' + lastIndex });
 		callback(render, arr);
 
+		// If the node is appended to the dom
+		//  Rerender the array input
 		if($lastNode.parentNode) {
 			const $node = render();
 			$lastNode.parentNode.replaceChild($node, $lastNode);

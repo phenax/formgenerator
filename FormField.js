@@ -25,8 +25,8 @@ export default class FormField {
 	// Validation method constants
 	static REQUIRED_VALIDATION(input) { return !!input; }
 	static LENGTH_VALIDATION(input, size) { return input.length >= size; }
-	static NO_VALIDATION() { return true; }
 	static EMAIL_VALIDATION(email) {return EMAIL_REGEX.test(email); }
+	static NO_VALIDATION() { return true; }
 
 
 	/**

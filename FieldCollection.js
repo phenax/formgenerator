@@ -81,8 +81,7 @@ export default class FieldCollection {
 		return this.arr.indexOf(field);
 	}
 
-	// Conver the fields collection to json
-	toJSON() { return JSON.stringify(this.toArray()); }
+
 
 	// Convert the field collection to an array
 	toArray() {
@@ -92,6 +91,8 @@ export default class FieldCollection {
 			attribs: field.attribs,
 		}));
 	}
+	// Conver the fields collection to json
+	toJSON() { return JSON.stringify(this.toArray()); }
 
 	// Load an array as a field collection
 	loadArray(fields) {
@@ -99,6 +100,9 @@ export default class FieldCollection {
 			.map(fieldOptns => new FormField(fieldOptns.type, fieldOptns.id, fieldOptns.attribs))
 			.map(field => this.set(field.id, field));
 	}
+	// Load a json string as a field collection
+	loadJSON(json) { return this.loadArray(JSON.parse(json)); }
+
 
 
 	/**

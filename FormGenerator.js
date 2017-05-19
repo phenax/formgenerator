@@ -45,7 +45,6 @@ export default class FormGenerator {
 				.map(attribs => {
 					if(Array.isArray(attribs.value)) {
 						attribs.value = (optionsFields[0].value)? optionsFields[0].value: [];
-						console.log(attribs.value);
 						return vdom.createArrayInput(attribs, () => null);
 					} else {
 						return vdom.createElem('input', attribs);

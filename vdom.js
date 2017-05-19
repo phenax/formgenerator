@@ -132,13 +132,13 @@ export function createArrayInput(attribs, callback=(() => null)) {
 	 */
 	const render = () =>
 		createElem('label', {}, [
-			div({},[ attribs.label ]),
+			div({},[ attribs.label, ' ', controlButton('Add', 'btn-primary', addInput) ]),
+			// div({}, [  ]),
 			div({}, arr.map(val => (
 				div({}, [
 					createElem('input', assign(val, { 'class': 'form-control' }))
 				])
 			))),
-			div({}, [ controlButton('Add', 'btn-primary', addInput) ])
 		]);
 
 

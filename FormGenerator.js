@@ -25,6 +25,15 @@ export default class FormGenerator {
 		// Clear the parent
 		vdom.unrender($wrapper);
 
+		console.log(field.attribs);
+
+		const editFormFields = Object.keys(field.attribs).map(attr => ({
+			$el: $el.querySelector(`[name=${attr}]`),
+			value: field.attribs[attr],
+		}));
+
+		const optionsFields = editFormFields.filter(edfield => Array.isArray(edfield.value));
+
 		// If the wrapper exists
 		if($wrapper) {
 			Object
@@ -33,19 +42,21 @@ export default class FormGenerator {
 					class: 'form-control', value: template[attr],
 					name: attr, label: attr, placeholder: attr,
 				}))
-				.map(attribs =>
-					(Array.isArray(attribs.value))?
-						vdom.createArrayInput(attribs, () => null):
-						vdom.createElem('input', attribs)
-				)
+				.map(attribs => {
+					if(Array.isArray(attribs.value)) {
+						attribs.value = (optionsFields[0].value)? optionsFields[0].value: [];
+						console.log(attribs.value);
+						return vdom.createArrayInput(attribs, () => null);
+					} else {
+						return vdom.createElem('input', attribs);
+					}
+				})
 				.concat([ vdom.text('NOTE: Possible validation inputs: email, required') ])
 				.map($input => $wrapper.appendChild(vdom.labeledInput($input)));
 		}
 
 		// Set all the values in the rendered edit form
-		Object
-			.keys(field.attribs)
-			.map(attr => ({ $el: $el.querySelector(`[name=${attr}]`), value: field.attribs[attr] }))
+		editFormFields
 			.filter(attr => attr.$el)
 			.forEach(attr => attr.$el.value = attr.value);
 	}

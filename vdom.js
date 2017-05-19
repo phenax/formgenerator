@@ -114,11 +114,17 @@ export function div(attribs={}, children=[]) {
  */
 export function createArrayInput(attribs, callback=(() => null)) {
 
-	let lastIndex = 0;
+	let lastIndex = -1;
 	let $lastNode = null;
 	let addInput;
 
-	const arr = attribs.value.map((a, i) => { lastIndex = i; a.name = `options_[${i}]`; });
+	const arr = attribs.value.map((a, i) => {
+		lastIndex = i;
+		return {
+			value: a.textContent,
+			name: `options_[${i}]`,
+		};
+	});
 
 	/**
 	 * Renders the array options list
@@ -141,7 +147,9 @@ export function createArrayInput(attribs, callback=(() => null)) {
 	 */
 	addInput = () => {
 
-		arr.push({ name: `options_[${lastIndex++}]`, value: 'Option ' + lastIndex });
+		lastIndex++;
+
+		arr.push({ name: `options_[${lastIndex}]`, value: 'Option ' + lastIndex });
 		callback(render, arr);
 
 		// If the node is appended to the dom

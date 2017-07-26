@@ -2,6 +2,7 @@
 import * as vdom from './vdom';
 import FieldCollection from './FieldCollection';
 import FormField from './FormField';
+import assign from 'object-assign';
 
 
 /**
@@ -25,12 +26,11 @@ export default class FormGenerator {
 		// Clear the parent
 		vdom.unrender($wrapper);
 
-		console.log(field.attribs);
-
-		const editFormFields = Object.keys(field.attribs).map(attr => ({
-			$el: $el.querySelector(`[name=${attr}]`),
-			value: field.attribs[attr],
+		let editFormFields = Object.keys(field.attribs).map(key => ({
+			_id: key,
+			value: field.attribs[key],
 		}));
+
 
 		const optionsFields = editFormFields.filter(edfield => Array.isArray(edfield.value));
 
@@ -56,6 +56,9 @@ export default class FormGenerator {
 
 		// Set all the values in the rendered edit form
 		editFormFields
+			.map(attr => assign({}, attr, {
+				$el: $el.querySelector(`[name=${attr._id}]`),
+			}))
 			.filter(attr => attr.$el)
 			.forEach(attr => attr.$el.value = attr.value);
 	}

@@ -50,8 +50,10 @@ export default class FormGenerator {
 						return vdom.createElem('input', attribs);
 					}
 				})
-				.concat([ vdom.text('NOTE: Possible validation inputs: email, required') ])
-				.map($input => $wrapper.appendChild(vdom.labeledInput($input)));
+				.map($el => vdom.labeledInput($el))
+				.concat([ vdom.div({}, [ 'NOTE: Possible validation inputs: email, required' ]) ])
+				.map($el => vdom.div({ style: 'padding-top: 1em;' }, [ $el ]))
+				.map($input => $wrapper.appendChild($input));
 		}
 
 		// Set all the values in the rendered edit form

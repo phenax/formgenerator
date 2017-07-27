@@ -117,6 +117,7 @@ export function createArrayInput(attribs, callback=(() => null)) {
 	let lastIndex = -1;
 	let $lastNode = null;
 	let addInput;
+	let deleteInput;
 
 	const arr = attribs.value.map((a, i) => {
 		lastIndex = i;
@@ -131,12 +132,16 @@ export function createArrayInput(attribs, callback=(() => null)) {
 	 * @return {HTMLElement}
 	 */
 	const render = () =>
-		createElem('label', {}, [
+		createElem('div', { style: 'padding: .3em 1em;' }, [
 			div({},[ attribs.label, ' ', controlButton('Add', 'btn-primary', addInput) ]),
-			// div({}, [  ]),
-			div({}, arr.map(val => (
-				div({}, [
-					createElem('input', assign(val, { 'class': 'form-control' }))
+			div({ style: 'width: 100%; display: block;' }, arr.map((val, index) => (
+				div({ class: 'row', style: 'width: 100%; display: block;' }, [
+					div({ class: 'col-md-10' }, [
+						createElem('input', assign(val, { 'class': 'form-control' })),
+					]),
+					div({ class: 'col-md-2' }, [
+						controlButton('X', 'btn-danger', deleteInput.bind(null, index)),
+					]),
 				])
 			))),
 		]);
@@ -150,6 +155,21 @@ export function createArrayInput(attribs, callback=(() => null)) {
 		lastIndex++;
 
 		arr.push({ name: `options_[${lastIndex}]`, value: 'Option ' + lastIndex });
+		callback(render, arr);
+
+		// If the node is appended to the dom
+		//  Rerender the array input
+		if($lastNode.parentNode) {
+			const $node = render();
+			$lastNode.parentNode.replaceChild($node, $lastNode);
+			$lastNode = $node;
+		}
+	};
+
+	deleteInput = index => {
+		lastIndex--;
+
+		arr.splice(index, 1);
 		callback(render, arr);
 
 		// If the node is appended to the dom

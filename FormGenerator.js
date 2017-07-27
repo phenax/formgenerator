@@ -119,6 +119,8 @@ export default class FormGenerator {
 		// To render the controls or not to render the controls
 		if(this.controls)
 			$wrapper.appendChild(this.getControlPanel(field));
+		else
+			$wrapper.appendChild(vdom.div({ style: 'padding-bottom: 1em;' }, [ ]));
 
 		$container.appendChild($wrapper);
 	}

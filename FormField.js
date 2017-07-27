@@ -111,6 +111,7 @@ export default class FormField {
 			}
 			case FormField.HTML_CONTENT: {
 				elementName = 'div';
+				attribs.style = 'padding: 0 1em;';
 				isInput = false;
 				break;
 			}

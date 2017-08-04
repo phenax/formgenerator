@@ -23,7 +23,7 @@ export function createElem(name, attribs={}, children=[]) {
 
 	// Apply attribs
 	Object.keys(attribs).forEach(key => {
-		if(!key.endsWith('_')) {
+		if(!key.match(/\_$/)) {
 			$elem[key] = attribs[key];
 			$elem.setAttribute(key, attribs[key]);
 		}
